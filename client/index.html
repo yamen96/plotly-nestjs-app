@@ -1,0 +1,57 @@
+<head>
+  <title>App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<script>
+  window.onload = function(){
+    const button = document.getElementById('button');
+
+    async function onButtonClick () {
+      const userName = document.getElementById('userName')?.value;
+      const productName = document.getElementById('productName')?.value;
+
+      if (!userName || !productName) return;
+
+      button.disabled = true;
+      await fetch('http://localhost:3000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            mutation {
+              addProduct(addProductInput:  {
+                userName: "${userName.toLowerCase()}",
+                productName: "${productName.toLowerCase()}",
+              }) {
+                name,
+                email,
+                age,
+                orders {
+                  name
+                }
+              }
+            }
+            `,
+        }),
+      })
+      button.disabled = false;
+    }
+
+    button.onclick = onButtonClick;
+  } 
+
+</script>
+
+<div style="padding: 50px; width: 500px; margin: 0 auto">
+  <h1>Add Product</h1>
+  <br/>
+  <div class="container-xl">
+    <label for="userName" class="form-label">User Name:</label>
+    <input type="text" class="form-control" id="userName" name="userName"><br><br>
+    <label for="productName" class="form-label">Product Name:</label>
+    <input type="text" class="form-control" id="productName" name="productName"><br><br>
+    <button type="button" class="btn btn-primary" id="button">Add Product</button>
+  </div>
+</div>
